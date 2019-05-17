@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    kompose.cmd: c:\dev\programms\kompose-windows-amd64.exe convert -f docker-compose.yml
+      --provider=openshift
+    kompose.version: 1.17.0 (a74acad)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: mongo-express
+  name: mongo-express
+spec:
+  replicas: 1
+  selector:
+    io.kompose.service: mongo-express
+  strategy:
+    resources: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: mongo-express
+    spec:
+      containers:
+      - env:
+        - name: ME_CONFIG_MONGODB_PORT
+          value: "27017"
+        - name: ME_CONFIG_MONGODB_SERVER
+          value: mongodb
+        image: ' '
+        name: mongo-express
+        ports:
+        - containerPort: 8081
+        resources: {}
+      restartPolicy: Always
+  test: false
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - mongo-express
+      from:
+        kind: ImageStreamTag
+        name: mongo-express:latest
+    type: ImageChange
+status: {}
